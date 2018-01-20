@@ -36,6 +36,23 @@ loop.close()
 
 import asyncio
 import json 
+
+log = open('log.txt', 'a')
+
+def check_cache():
+    count_dict={}
+    for line in log:
+        this = line.rstrip().split(',')
+        if(this[0] not in count_dict):
+            count_dict[this[0]] = 1
+        else:
+            count_dict[this[0]] += 1
+    for key in list(count_dict.keys()):
+        if(count_dict[key] > 1):
+            return True
+            break 
+
+
 class EchoServerClientProtocol(asyncio.Protocol):
     def connection_made(self, transport):
         peername = transport.get_extra_info('peername')
@@ -46,6 +63,13 @@ class EchoServerClientProtocol(asyncio.Protocol):
         message = json.loads(data.decode())
         print('Song Received: '+message['song'])
 
+        string = 'song: ' +message['song'] + ',time: '+ str(message['time']) +'\n'
+        log.write(string)
+
+        val=check_cache()
+
+        if(val):
+            print("####### MATCH FOUND! ############")
         print('Send: {!r}'.format(message))
         self.transport.write('lolreax'.encode())
 

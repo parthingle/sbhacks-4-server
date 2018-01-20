@@ -1,6 +1,6 @@
 import asyncio
 import json
-
+import time
 async def tcp_echo_client(message, loop):
     reader, writer = await asyncio.open_connection('127.0.0.1', 8888,
                                                    loop=loop)
@@ -15,7 +15,7 @@ async def tcp_echo_client(message, loop):
     writer.close()
 
 
-message = { "name":"John", "age":30, "song":"Los Angeles", "artist":"chainsmokers" }
+message = { "name":"John", "age":30, "song":"Paris", "artist":"chainsmokers", "time":time.time() }
 #message=json_message.
 loop = asyncio.get_event_loop()
 loop.run_until_complete(tcp_echo_client(message, loop))
