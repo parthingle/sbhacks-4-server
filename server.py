@@ -3,7 +3,7 @@ import json
 async def handle_echo(reader, writer):
     data = await reader.read(100)
     #message = data.decode()
-    message = json.loads(data, sort_keys=True, indent=4, separators=(',', ':'))
+    message = json.loads(data)
     addr = writer.get_extra_info('peername')
     print("Received %r from %r" % (message, addr))
 
