@@ -52,26 +52,7 @@ ref = db.reference('restricted_access/secret_document') ### What does this argum
 
 log = open('log.txt', 'a')
 
-def check_cache():
-    '''
-    count_dict={}
-    with open('log.txt') as lol:
-        for line in lol:
-            this = line.rstrip().split(',')
-            if(this[0] not in count_dict):
-                count_dict[this[0]] = 1
-            else:
-                count_dict[this[0]] += 1
-    for key in list(count_dict.keys()):
-        if(count_dict[key] > 1):
-            return True
-            break 
-    '''
-    entry = ref.child('users').push({'user-id' : self.userid, 'song' : self.song, \
-        'artist' : self.artist, 'lat' : self.lat, 'long' : self.long, 'time' : self.time})
 
-    print(ref.get())
-    return True
 class EchoServerClientProtocol(asyncio.Protocol):
     def connection_made(self, transport):
         peername = transport.get_extra_info('peername')
@@ -119,6 +100,27 @@ class EchoServerClientProtocol(asyncio.Protocol):
         # writer.close()
 
         ###################################################
+
+    def check_cache(self):
+    '''
+    count_dict={}
+    with open('log.txt') as lol:
+        for line in lol:
+            this = line.rstrip().split(',')
+            if(this[0] not in count_dict):
+                count_dict[this[0]] = 1
+            else:
+                count_dict[this[0]] += 1
+    for key in list(count_dict.keys()):
+        if(count_dict[key] > 1):
+            return True
+            break 
+    '''
+        entry = ref.child('users').push({'user-id' : self.userid, 'song' : self.song, \
+        'artist' : self.artist, 'lat' : self.lat, 'long' : self.long, 'time' : self.time})
+
+    print(ref.get())
+    return True
 loop = asyncio.get_event_loop()
 # Each client connection will create a new protocol instance
 coro = loop.create_server(EchoServerClientProtocol, '127.0.0.1', 8888)
