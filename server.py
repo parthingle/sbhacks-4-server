@@ -36,17 +36,18 @@ loop.close()
 
 import asyncio
 import json 
-
+import time
 log = open('log.txt', 'a')
 
 def check_cache():
     count_dict={}
-    for line in log:
-        this = line.rstrip().split(',')
-        if(this[0] not in count_dict):
-            count_dict[this[0]] = 1
-        else:
-            count_dict[this[0]] += 1
+    with open('log.txt') as lol:
+        for line in lol:
+            this = line.rstrip().split(',')
+            if(this[0] not in count_dict):
+                count_dict[this[0]] = 1
+            else:
+                count_dict[this[0]] += 1
     for key in list(count_dict.keys()):
         if(count_dict[key] > 1):
             return True
@@ -65,7 +66,7 @@ class EchoServerClientProtocol(asyncio.Protocol):
 
         string = 'song: ' +message['song'] + ',time: '+ str(message['time']) +'\n'
         log.write(string)
-
+        log.flush()
         val=check_cache()
 
         if(val):
