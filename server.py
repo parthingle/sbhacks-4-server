@@ -47,7 +47,7 @@ firebase_admin.initialize_app(cred, {
 })
 
 # As an admin, the app has access to read and write all data, regradless of Security Rules
-ref = db.reference('restricted_access/secret_document') ### What does this argument mean?
+ref = db.reference('users') ### What does this argument mean?
 
 
 log = open('log.txt', 'a')
@@ -72,13 +72,19 @@ class EchoServerClientProtocol(asyncio.Protocol):
         self.lat = message['lat']
         self.long = message['long']
 
+
         #string = 'user-id: '+message['user-id'] +',song: ' +message['song'] + ',artist: ' + message['artist']+ ',time: '+ str(message['time']) +'\n'
         # log.write(string)
         # log.flush()
-        val=self.check_cache()
+        val, match=self.check_cache()
 
         if(val):
             print("####### MATCH FOUND! ############")
+
+            print('self.artist: ' + self.artist + '\nretrieved artists: ')
+            for key in list(match.keys()):
+                print(match[key]['artist'])
+                
         print('Send: {!r}'.format(message))
         self.transport.write('lolreax'.encode())
 
@@ -116,12 +122,13 @@ class EchoServerClientProtocol(asyncio.Protocol):
                 return True
                 break 
         '''
-        entry = ref.child('users').push({'user-id' : self.userid, 'song' : self.song, 'artist' : self.artist, 'lat' : self.lat, 'long' : self.long, 'time' : self.time})
+        
         #ref.remove() to clear whole database
-        print("@@@@@@@@@")
-        print(ref.get())
-        print("@@@@@@@@@")
-        return True
+
+        artist_query = ref.order_by_child('artist').equal_to(self.artist).get()
+        entry = ref.child('users').push({'user-id' : self.userid, 'song' : self.song, 'artist' : self.artist, 'lat' : self.lat, 'long' : self.long, 'time' : self.time})
+        return (bool(artist_query), artist_query)
+
 loop = asyncio.get_event_loop()
 # Each client connection will create a new protocol instance
 coro = loop.create_server(EchoServerClientProtocol, '127.0.0.1', 8888)
