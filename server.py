@@ -38,16 +38,17 @@ import asyncio
 import json 
 import time
 
+import firebase_admin
+from firebase_admin import credentials
 
-from firebase import firebase
-firebase = firebase.FirebaseApplication('https://sbhacks4-9f27c.firebaseapp.com', None)
-new_user = 'Ozgur Vatansever'
+cred = credentials.Certificate("serviceAccountKey.json")
+firebase_admin.initialize_app(cred, {
+    'databaseURL': 'https://sbhacks4-9f27c.firebaseio.com'
+})
 
-result = firebase.post('/users', new_user, {'print': 'pretty'}, {'X_FANCY_HEADER': 'VERY FANCY'})
-print (result)
-
-result = firebase.post('/users', new_user, {'print': 'silent'}, {'X_FANCY_HEADER': 'VERY FANCY'})
-print (result == None)
+# As an admin, the app has access to read and write all data, regradless of Security Rules
+ref = db.reference('restricted_access/secret_document')
+print(ref.get())
 
 
 log = open('log.txt', 'a')
