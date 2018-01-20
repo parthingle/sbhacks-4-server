@@ -1,34 +1,24 @@
 import asyncio
-import aiohttp
+from aiohttp import web
 
-async def handle_echo(reader, writer):
-    data = await reader.read(1024)
-    message = data.decode()
-    addr = writer.get_extra_info('peername')
+async def hello(request):
+    return web.Response(body=b"Hello, world")
 
-
-
-    print("Received %r from %r" % (message, addr))
-
-    print("Send: %r" % message)
-    writer.write(data)
-    await writer.drain()
-
-    print("Close the client socket")
-    writer.close()
+app = web.Application()
+app.router.add_route('GET', '/', hello)
 
 loop = asyncio.get_event_loop()
-coro = asyncio.start_server(handle_echo, '127.0.0.1', 8888, loop=loop)
-server = loop.run_until_complete(coro)
-
-# Serve requests until Ctrl+C is pressed
-print('Serving on {}'.format(server.sockets[0].getsockname()))
+handler = app.make_handler()
+f = loop.create_server(handler, '0.0.0.0', 8080)
+srv = loop.run_until_complete(f)
+print('serving on', srv.sockets[0].getsockname())
 try:
     loop.run_forever()
 except KeyboardInterrupt:
     pass
-
-# Close the server
-server.close()
-loop.run_until_complete(server.wait_closed())
+finally:
+    srv.close()
+    loop.run_until_complete(srv.wait_closed())
+    loop.run_until_complete(handler.finish_connections(1.0))
+    loop.run_until_complete(app.finish())
 loop.close()
