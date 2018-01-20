@@ -40,20 +40,20 @@ import time
 
 import firebase_admin
 from firebase_admin import credentials
-
+from firebase_admin import db
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://sbhacks4-9f27c.firebaseio.com'
 })
 
 # As an admin, the app has access to read and write all data, regradless of Security Rules
-ref = db.reference('restricted_access/secret_document')
-print(ref.get())
+ref = db.reference('restricted_access/secret_document') ### What does this argument mean?
 
 
 log = open('log.txt', 'a')
 
 def check_cache():
+    '''
     count_dict={}
     with open('log.txt') as lol:
         for line in lol:
@@ -66,19 +66,32 @@ def check_cache():
         if(count_dict[key] > 1):
             return True
             break 
+    '''
+    entry = ref.child('users').push({'user-id' : self.userid, 'song' : self.song, \
+        'artist' : self.artist, 'lat' : self.lat, 'long' : self.long, 'time' : self.time})
 
-
+    print(ref.get())
+    return True
 class EchoServerClientProtocol(asyncio.Protocol):
     def connection_made(self, transport):
         peername = transport.get_extra_info('peername')
         print('Connection from {}'.format(peername))
         self.transport = transport
 
+        
+
     def data_received(self, data):
         message = json.loads(data.decode())
         print('Song Received: '+message['song'])
 
-        string = 'song: ' +message['song'] + ',time: '+ str(message['time']) +'\n'
+        self.userid = message['user-id']
+        self.song = message['song']
+        self.time = message['time']
+        self.artist = message['artist']
+        self.lat = message['lat']
+        self.long = message['long']
+
+        #string = 'user-id: '+message['user-id'] +',song: ' +message['song'] + ',artist: ' + message['artist']+ ',time: '+ str(message['time']) +'\n'
         log.write(string)
         log.flush()
         val=check_cache()
