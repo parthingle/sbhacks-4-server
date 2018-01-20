@@ -75,7 +75,7 @@ class EchoServerClientProtocol(asyncio.Protocol):
         #string = 'user-id: '+message['user-id'] +',song: ' +message['song'] + ',artist: ' + message['artist']+ ',time: '+ str(message['time']) +'\n'
         # log.write(string)
         # log.flush()
-        val=check_cache()
+        val=self.check_cache()
 
         if(val):
             print("####### MATCH FOUND! ############")
@@ -102,25 +102,26 @@ class EchoServerClientProtocol(asyncio.Protocol):
         ###################################################
 
     def check_cache(self):
-    '''
-    count_dict={}
-    with open('log.txt') as lol:
-        for line in lol:
-            this = line.rstrip().split(',')
-            if(this[0] not in count_dict):
-                count_dict[this[0]] = 1
-            else:
-                count_dict[this[0]] += 1
-    for key in list(count_dict.keys()):
-        if(count_dict[key] > 1):
-            return True
-            break 
-    '''
-        entry = ref.child('users').push({'user-id' : self.userid, 'song' : self.song, \
-        'artist' : self.artist, 'lat' : self.lat, 'long' : self.long, 'time' : self.time})
-
-    print(ref.get())
-    return True
+        '''
+        count_dict={}
+        with open('log.txt') as lol:
+            for line in lol:
+                this = line.rstrip().split(',')
+                if(this[0] not in count_dict):
+                    count_dict[this[0]] = 1
+                else:
+                    count_dict[this[0]] += 1
+        for key in list(count_dict.keys()):
+            if(count_dict[key] > 1):
+                return True
+                break 
+        '''
+        entry = ref.child('users').push({'user-id' : self.userid, 'song' : self.song, 'artist' : self.artist, 'lat' : self.lat, 'long' : self.long, 'time' : self.time})
+        #ref.remove() to clear whole database
+        print("@@@@@@@@@")
+        print(ref.get())
+        print("@@@@@@@@@")
+        return True
 loop = asyncio.get_event_loop()
 # Each client connection will create a new protocol instance
 coro = loop.create_server(EchoServerClientProtocol, '127.0.0.1', 8888)
