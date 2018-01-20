@@ -92,8 +92,8 @@ class EchoServerClientProtocol(asyncio.Protocol):
         self.long = message['long']
 
         #string = 'user-id: '+message['user-id'] +',song: ' +message['song'] + ',artist: ' + message['artist']+ ',time: '+ str(message['time']) +'\n'
-        log.write(string)
-        log.flush()
+        # log.write(string)
+        # log.flush()
         val=check_cache()
 
         if(val):
