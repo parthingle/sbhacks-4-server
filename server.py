@@ -3,12 +3,13 @@ import json
 async def handle_echo(reader, writer):
     data = await reader.read(100)
     #message = data.decode()
-    message = json.loads(data)
+    message = json.loads(data.decode())
+    print(message['song'])
     addr = writer.get_extra_info('peername')
     print("Received %r from %r" % (message, addr))
 
     print("Send: %r" % message)
-    writer.write('lolreax')
+    writer.write('lolreax'.encode())
     await writer.drain()
 
     print("Close the client socket")
