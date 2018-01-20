@@ -37,6 +37,19 @@ loop.close()
 import asyncio
 import json 
 import time
+
+
+from firebase import firebase
+firebase = firebase.FirebaseApplication('https://sbhacks4-9f27c.firebaseapp.com', None)
+new_user = 'Ozgur Vatansever'
+
+result = firebase.post('/users', new_user, {'print': 'pretty'}, {'X_FANCY_HEADER': 'VERY FANCY'})
+print (result)
+
+result = firebase.post('/users', new_user, {'print': 'silent'}, {'X_FANCY_HEADER': 'VERY FANCY'})
+print (result == None)
+
+
 log = open('log.txt', 'a')
 
 def check_cache():
