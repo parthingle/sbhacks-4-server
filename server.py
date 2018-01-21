@@ -47,7 +47,7 @@ firebase_admin.initialize_app(cred, {
 })
 
 # As an admin, the app has access to read and write all data, regradless of Security Rules
-ref = db.reference('users') ### What does this argument mean?
+ref = db.reference('restricted_access/secret_document/users') ### What does this argument mean?
 
 
 log = open('log.txt', 'a')
