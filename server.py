@@ -50,91 +50,40 @@ firebase_admin.initialize_app(cred, {
 ref = db.reference('restricted_access/secret_document/users') ### What does this argument mean?
 
 
-log = open('log.txt', 'a')
-
-
 class EchoServerClientProtocol(asyncio.Protocol):
     def connection_made(self, transport):
         peername = transport.get_extra_info('peername')
         print('Connection from {}'.format(peername))
         self.transport = transport
 
-        
-
     def data_received(self, data):
-        message = json.loads(data.decode())
-        print('Song Received: '+message['song'])
+        message = await json.loads(data.decode())
+        #print('Song Received: '+message['song'])
 
         self.userid = message['user-id']
         self.song = message['song']
         self.time = message['time']
         self.artist = message['artist']
- 
         self.lat = message['lat']
         self.long = message['long']
+        self.spotify = message['spotify']
 
-
-        #string = 'user-id: '+message['user-id'] +',song: ' +message['song'] + ',artist: ' + message['artist']+ ',time: '+ str(message['time']) +'\n'
-        # log.write(string)
-        # log.flush()
         val, match=self.check_cache()
 
-        if(val):
-            print("####### MATCH FOUND! ############")
-            match_list = set()
 
-            print('self.artist: ' + self.artist + '\nretrieved artists: ')
-            for key in list(match.keys()):
-                match_list.add('-'.join(match[key]['port']))
-            resp_json = {'flag' : True, 'matches' : ','.join(match_list)}
-
-            self.transport.write((json.dumps(resp_json)).encode())
-
-        print('Send: {!r}'.format(message))
         self.transport.write('lolreax'.encode())
 
         print('Close the client socket')
         self.transport.close()
 
-        ###################################################
-        # data = await reader.read(100)
-        # #message = data.decode()
-        # message = json.loads(data.decode())
-        # print(message['song'])
-        # addr = writer.get_extra_info('peername')
-        # print("Received %r from %r" % (message, addr))
-        # print("Send: %r" % message)
-        # writer.write('lolreax'.encode())
-        # await writer.drain()
-
-        # print("Close the client socket")
-        # writer.close()
-
-        ###################################################
-
     def check_cache(self):
-        '''
-        count_dict={}
-        with open('log.txt') as lol:
-            for line in lol:
-                this = line.rstrip().split(',')
-                if(this[0] not in count_dict):
-                    count_dict[this[0]] = 1
-                else:
-                    count_dict[this[0]] += 1
-        for key in list(count_dict.keys()):
-            if(count_dict[key] > 1):
-                return True
-                break 
-        '''
-        
+
         #ref.remove() to clear whole database
-
-        artist_query = ref.order_by_child('artist').equal_to(self.artist).get()
-        tcp_sock = self.transport.get_extra_info('socket')
-
-        entry_ip, entry_peer = tcp_sock.getsockname(), tcp_sock.getpeername()
-        entry = ref.push({'user-id' : self.userid, 'song' : self.song, 'artist' : self.artist, 'lat' : self.lat, 'long' : self.long, 'time' : self.time, 'ip' : entry_ip, 'port' : entry_peer})
+        all_entries = ref.get()
+        for key in list(all_entries.keys()):
+            this_spotify = all_entries[key]['spotify']
+            for 
+        entry = ref.push({'user-id' : self.userid, 'lat' : self.lat, 'long' : self.long, 'time' : self.time, 'song' : self.song, 'artist' : self.artist})
         return (bool(artist_query), artist_query)
 
 loop = asyncio.get_event_loop()
@@ -153,3 +102,7 @@ except KeyboardInterrupt:
 server.close()
 loop.run_until_complete(server.wait_closed())
 loop.close()
+
+'''
+
+'''

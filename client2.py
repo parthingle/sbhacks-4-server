@@ -15,8 +15,8 @@ async def tcp_echo_client(message, loop):
     print('Close the socket')
     # writer.close()
 
-
-message = { "user-id":"Sue","lat":'+321', "long":"-321", "song":"Paris", "artist":"chainsmokers", "time":time.time()}
+spotify_json = {}
+message = { "user-id":"Sue","lat":'+321', "long":"-321", "song":"Paris", "artist":"chainsmokers", "time":time.time(), 'spotify' : spotify_json}
 #message=json_message.
 loop = asyncio.get_event_loop()
 loop.run_until_complete(tcp_echo_client(message, loop))
