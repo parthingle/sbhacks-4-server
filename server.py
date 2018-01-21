@@ -36,7 +36,7 @@ loop.close()
 
 import asyncio
 import json 
-import time
+import datetime
 
 import firebase_admin
 from firebase_admin import credentials
@@ -83,8 +83,10 @@ class EchoServerClientProtocol(asyncio.Protocol):
 
             print('self.artist: ' + self.artist + '\nretrieved artists: ')
             for key in list(match.keys()):
-                print(match[key]['artist'])
+                diff = match[key]['time'] - self.time
                 
+                print(diff)
+
         print('Send: {!r}'.format(message))
         self.transport.write('lolreax'.encode())
 
