@@ -33,7 +33,7 @@ loop.close()
 
 
 '''
-
+import socket
 import asyncio
 import json 
 import datetime
@@ -80,13 +80,14 @@ class EchoServerClientProtocol(asyncio.Protocol):
 
         if(val):
             print("####### MATCH FOUND! ############")
-
+            self.transport.write(("Your match has been found\n").encode())
             print('self.artist: ' + self.artist + '\nretrieved artists: ')
             for key in list(match.keys()):
-                diff = match[key]['time'] - self.time
-                print(datetime.datetime.fromtimestamp(int(diff)).strftime('%Y-%m-%d %H:%M:%S'))
-                # match[key]['transport'].write("Your match has been found").encode()
-                
+                # diff = match[key]['time'] - self.time
+                # print(datetime.datetime.fromtimestamp(int(diff)).strftime('%Y-%m-%d %H:%M:%S'))
+                # new_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                # new_sock.connect((match[key]['ip'] ,match[key]['peer'] ))
+                print('match[key][ip] = ' + str(match[key]['ip']) + ' math[key][peer] = '+ str(match[key]['peer']))
 
         print('Send: {!r}'.format(message))
         self.transport.write('lolreax'.encode())
@@ -129,7 +130,10 @@ class EchoServerClientProtocol(asyncio.Protocol):
         #ref.remove() to clear whole database
 
         artist_query = ref.order_by_child('artist').equal_to(self.artist).get()
-        entry = ref.push({'user-id' : self.userid, 'song' : self.song, 'artist' : self.artist, 'lat' : self.lat, 'long' : self.long, 'time' : self.time})
+        tcp_sock = self.transport.get_extra_info('socket')
+
+        entry_ip, entry_peer = tcp_sock.getsockname(), tcp_sock.getpeername()
+        entry = ref.push({'user-id' : self.userid, 'song' : self.song, 'artist' : self.artist, 'lat' : self.lat, 'long' : self.long, 'time' : self.time, 'ip' : entry_ip, 'port' : entry_peer})
         return (bool(artist_query), artist_query)
 
 loop = asyncio.get_event_loop()
