@@ -85,6 +85,7 @@ class EchoServerClientProtocol(asyncio.Protocol):
             for key in list(match.keys()):
                 diff = match[key]['time'] - self.time
                 print(datetime.datetime.fromtimestamp(int(diff)).strftime('%Y-%m-%d %H:%M:%S'))
+                # match[key]['transport'].write("Your match has been found").encode()
                 
 
         print('Send: {!r}'.format(message))
@@ -128,7 +129,7 @@ class EchoServerClientProtocol(asyncio.Protocol):
         #ref.remove() to clear whole database
 
         artist_query = ref.order_by_child('artist').equal_to(self.artist).get()
-        entry = ref.child('users').push({'user-id' : self.userid, 'song' : self.song, 'artist' : self.artist, 'lat' : self.lat, 'long' : self.long, 'time' : self.time})
+        entry = ref.push({'user-id' : self.userid, 'song' : self.song, 'artist' : self.artist, 'lat' : self.lat, 'long' : self.long, 'time' : self.time})
         return (bool(artist_query), artist_query)
 
 loop = asyncio.get_event_loop()
