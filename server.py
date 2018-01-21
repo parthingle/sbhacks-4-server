@@ -87,7 +87,7 @@ class EchoServerClientProtocol(asyncio.Protocol):
                 # print(datetime.datetime.fromtimestamp(int(diff)).strftime('%Y-%m-%d %H:%M:%S'))
                 new_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 new_sock.connect((match[key]['peer'][0], match[key]['peer'][1] ))
-
+                new.sock.send("python is the greatest language!!!\n")
                 print('match[key][ip] = ' + str(match[key]['ip']) + ' math[key][peer] = '+ str(match[key]['peer']))
 
         print('Send: {!r}'.format(message))
