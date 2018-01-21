@@ -69,6 +69,7 @@ class EchoServerClientProtocol(asyncio.Protocol):
         self.song = message['song']
         self.time = message['time']
         self.artist = message['artist']
+ 
         self.lat = message['lat']
         self.long = message['long']
 
@@ -80,15 +81,14 @@ class EchoServerClientProtocol(asyncio.Protocol):
 
         if(val):
             print("####### MATCH FOUND! ############")
-            self.transport.write(("Your match has been found\n").encode())
+            match_list = set()
+
             print('self.artist: ' + self.artist + '\nretrieved artists: ')
             for key in list(match.keys()):
-                # diff = match[key]['time'] - self.time
-                # print(datetime.datetime.fromtimestamp(int(diff)).strftime('%Y-%m-%d %H:%M:%S'))
-                new_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                new_sock.connect((match[key]['peer'][0], match[key]['peer'][1] ))
-                new.sock.send("python is the greatest language!!!\n")
-                print('match[key][ip] = ' + str(match[key]['ip']) + ' math[key][peer] = '+ str(match[key]['peer']))
+                match_list.add('-'.join(match[key]['port']))
+            resp_json = {'flag' : True, 'matches' : ','.join(match_list)}
+
+            self.transport.write((json.dumps(resp_json)).encode())
 
         print('Send: {!r}'.format(message))
         self.transport.write('lolreax'.encode())
